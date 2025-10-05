@@ -76,6 +76,10 @@ import { Personal } from '../../models/personal.interface';
           <h3>{{estadisticas().porEstado.enProceso || 0}}</h3>
           <p>En Proceso</p>
         </div>
+        <div class="stat-card observaciones">
+          <h3>{{estadisticas().porEstado.pendienteObservaciones || 0}}</h3>
+          <p>Pendiente Observaciones</p>
+        </div>
         <div class="stat-card finalizada">
           <h3>{{estadisticas().porEstado.finalizadas || 0}}</h3>
           <p>Finalizadas</p>
@@ -165,14 +169,14 @@ import { Personal } from '../../models/personal.interface';
               }
               
               @if (cirugia.estado === EstadoCirugiaProgramada.EN_PROCESO) {
-                <button class="btn-action btn-finish" (click)="finalizarCirugia(cirugia)" title="Finalizar">
-                  🏁
+                <button class="btn-action btn-finish" (click)="finalizarCirugia(cirugia)" title="Finalizar Procedimiento">
+                  🏁 Finalizar
                 </button>
               }
               
               @if (cirugia.estado === EstadoCirugiaProgramada.PENDIENTE_OBSERVACIONES) {
-                <button class="btn-action btn-edit" (click)="agregarObservaciones(cirugia)" title="Observaciones">
-                  📝
+                <button class="btn-action btn-edit" (click)="finalizarCirugia(cirugia)" title="Completar Observaciones">
+                  📝 Observaciones
                 </button>
               }
 
@@ -923,6 +927,7 @@ import { Personal } from '../../models/personal.interface';
     .stat-card.aprobada { border-left-color: #10b981; }
     .stat-card.agendada { border-left-color: #3b82f6; }
     .stat-card.proceso { border-left-color: #8b5cf6; }
+    .stat-card.observaciones { border-left-color: #f97316; }
     .stat-card.finalizada { border-left-color: #06b6d4; }
 
     .stat-card h3 {
@@ -2119,7 +2124,28 @@ export class ProgramacionCirugiaComponent implements OnInit {
   }
 
   finalizarCirugia(cirugia: CirugiaProgramada) {
-    this.abrirModal('observaciones', cirugia);
+    // Si la cirugía está en proceso, el administrador la marca como pendiente observaciones
+    if (cirugia.estado === EstadoCirugiaProgramada.EN_PROCESO) {
+      this.finalizarProcedimiento(cirugia);
+    } 
+    // Si está pendiente observaciones, el médico completa las observaciones
+    else if (cirugia.estado === EstadoCirugiaProgramada.PENDIENTE_OBSERVACIONES) {
+      this.abrirModal('observaciones', cirugia);
+    }
+  }
+
+  async finalizarProcedimiento(cirugia: CirugiaProgramada) {
+    if (!confirm('¿Confirma que la cirugía ha finalizado? Se cambiará a "Pendiente Observaciones" para que el médico complete los datos.')) return;
+
+    this.cargando.set(true);
+    try {
+      await this.programacionService.finalizarCirugia(cirugia.id!, 'current-user');
+      await this.cargarDatos();
+    } catch (error) {
+      console.error('Error al finalizar procedimiento:', error);
+    } finally {
+      this.cargando.set(false);
+    }
   }
 
   private prepararFormularioObservaciones() {
@@ -2176,11 +2202,11 @@ export class ProgramacionCirugiaComponent implements OnInit {
         medicoObservaciones: 'current-user' // TODO: obtener usuario actual
       };
 
-      await this.programacionService.finalizarCirugia(cirugia.id!, 'current-user');
+      await this.programacionService.completarObservaciones(cirugia.id!, observaciones, 'current-user');
       await this.cargarDatos();
       this.cerrarModal();
     } catch (error) {
-      console.error('Error al finalizar cirugía:', error);
+      console.error('Error al completar observaciones:', error);
     } finally {
       this.cargando.set(false);
     }

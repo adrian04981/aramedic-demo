@@ -342,8 +342,15 @@ export class ProgramacionCirugiaService {
 
     // Calcular duración real
     if (tiemposActualizados.inicioReal) {
+      // Convertir a Date si es necesario
+      const inicioReal = tiemposActualizados.inicioReal instanceof Date 
+        ? tiemposActualizados.inicioReal 
+        : (tiemposActualizados.inicioReal as any).toDate();
+      
+      const finReal = tiemposActualizados.finReal!;
+      
       tiemposActualizados.duracionRealMinutos = Math.round(
-        (tiemposActualizados.finReal!.getTime() - tiemposActualizados.inicioReal.getTime()) / (1000 * 60)
+        (finReal.getTime() - inicioReal.getTime()) / (1000 * 60)
       );
     }
 

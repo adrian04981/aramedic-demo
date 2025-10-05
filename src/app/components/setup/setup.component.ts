@@ -6,6 +6,7 @@ import { CitaSetupService } from '../../services/cita-setup.service';
 import { PacienteService } from '../../services/paciente.service';
 import { CitaService } from '../../services/cita.service';
 import { CirugiaService } from '../../services/cirugia.service';
+import { PersonalService } from '../../services/personal.service';
 
 @Component({
   selector: 'app-setup',
@@ -16,7 +17,7 @@ import { CirugiaService } from '../../services/cirugia.service';
       <div class="setup-card">
         <div class="setup-header">
           <h1>🔧 Configuración de Datos de Prueba</h1>
-          <p>{{setupMode() === 'citas' ? 'Sistema de setup para Citas y Agendamiento' : setupMode() === 'cirugias' ? 'Sistema de setup para Tipos de Cirugías' : 'Sistema de setup para Pacientes y Usuarios'}}</p>
+          <p>{{setupMode() === 'citas' ? 'Sistema de setup para Citas y Agendamiento' : setupMode() === 'cirugias' ? 'Sistema de setup para Tipos de Cirugías' : setupMode() === 'personal' ? 'Sistema de setup para Personal Médico' : 'Sistema de setup para Pacientes y Usuarios'}}</p>
           
           <!-- Navegación entre modos -->
           <div class="setup-nav">
@@ -37,6 +38,12 @@ import { CirugiaService } from '../../services/cirugia.service';
               [class.active]="setupMode() === 'cirugias'"
               (click)="cambiarModo('cirugias')">
               🏥 Setup Cirugías
+            </button>
+            <button 
+              class="nav-btn" 
+              [class.active]="setupMode() === 'personal'"
+              (click)="cambiarModo('personal')">
+              👨‍⚕️ Setup Personal
             </button>
           </div>
         </div>
@@ -61,6 +68,10 @@ import { CirugiaService } from '../../services/cirugia.service';
               <div class="stat-item">
                 <span class="stat-number">{{totalCirugias()}}</span>
                 <span class="stat-label">Tipos de Cirugía</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{totalPersonal()}}</span>
+                <span class="stat-label">Personal Médico</span>
               </div>
             </div>
           </div>
@@ -189,13 +200,44 @@ import { CirugiaService } from '../../services/cirugia.service';
             </div>
             }
 
+            <!-- Sección de Personal Médico (solo visible en modo personal) -->
+            @if (setupMode() === 'personal') {
+            <div class="action-card">
+              <div class="action-info">
+                <h4>👨‍⚕️ Crear Personal Médico</h4>
+                <p>Genera personal médico predefinido para la clínica estética con datos realistas y experiencia variada.</p>
+                <ul>
+                  <li>✅ 3 enfermeras especializadas en cirugía estética</li>
+                  <li>✅ 3 anestesiólogos con diferentes especialidades</li>
+                  <li>✅ Certificaciones y experiencia realista</li>
+                  <li>✅ Datos de contacto y información laboral</li>
+                  <li>✅ Turnos de trabajo y salarios base</li>
+                </ul>
+              </div>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-primary" 
+                  (click)="crearPersonalMedico()"
+                  [disabled]="cargandoPersonal()">
+                  {{cargandoPersonal() ? 'Creando...' : '+ Crear Personal Médico'}}
+                </button>
+                <button 
+                  class="btn btn-secondary" 
+                  (click)="limpiarPersonalMedico()"
+                  [disabled]="cargandoPersonal()">
+                  {{cargandoPersonal() ? 'Limpiando...' : '🗑️ Limpiar Personal'}}
+                </button>
+              </div>
+            </div>
+            }
+
             <!-- Sección de limpieza (visible en ambos modos) -->
             <div class="action-card warning">
               <div class="action-info">
                 <h4>🗑️ Limpiar Datos de Prueba</h4>
-                <p>{{setupMode() === 'citas' ? 'Elimina todas las citas de prueba.' : setupMode() === 'cirugias' ? 'Elimina todos los tipos de cirugías.' : 'Elimina todos los datos de pacientes y historiales.'}} <strong>Esta acción no se puede deshacer.</strong></p>
+                <p>{{setupMode() === 'citas' ? 'Elimina todas las citas de prueba.' : setupMode() === 'cirugias' ? 'Elimina todos los tipos de cirugías.' : setupMode() === 'personal' ? 'Elimina todo el personal médico.' : 'Elimina todos los datos de pacientes y historiales.'}} <strong>Esta acción no se puede deshacer.</strong></p>
                 <div class="warning-note">
-                  ⚠️ <strong>Atención:</strong> {{setupMode() === 'citas' ? 'Para citas puedes usar el botón de limpiar arriba.' : setupMode() === 'cirugias' ? 'Para cirugías puedes usar el botón de limpiar arriba.' : 'Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.'}}
+                  ⚠️ <strong>Atención:</strong> {{setupMode() === 'citas' ? 'Para citas puedes usar el botón de limpiar arriba.' : setupMode() === 'cirugias' ? 'Para cirugías puedes usar el botón de limpiar arriba.' : setupMode() === 'personal' ? 'Para personal puedes usar el botón de limpiar arriba.' : 'Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.'}}
                 </div>
               </div>
               <div class="action-buttons">
@@ -212,6 +254,13 @@ import { CirugiaService } from '../../services/cirugia.service';
                   (click)="limpiarTiposCirugias()"
                   [disabled]="cargandoCirugias()">
                   {{cargandoCirugias() ? 'Limpiando...' : '🗑️ Limpiar Todas las Cirugías'}}
+                </button>
+                } @else if (setupMode() === 'personal') {
+                <button 
+                  class="btn btn-danger" 
+                  (click)="limpiarPersonalMedico()"
+                  [disabled]="cargandoPersonal()">
+                  {{cargandoPersonal() ? 'Limpiando...' : '🗑️ Limpiar Todo el Personal'}}
                 </button>
                 } @else {
                 <button 
@@ -690,11 +739,14 @@ export class SetupComponent {
   totalHistoriales = signal(0);
   totalCitas = signal(0);
   totalCirugias = signal(0);
+  totalPersonal = signal(0);
   cargandoPacientes = signal(false);
   cargandoCitas = signal(false);
   cargandoCirugias = signal(false);
-  setupMode = signal<'pacientes' | 'citas' | 'cirugias'>('pacientes');
+  cargandoPersonal = signal(false);
+  setupMode = signal<'pacientes' | 'citas' | 'cirugias' | 'personal'>('pacientes');
   logs = signal<Array<{timestamp: Date, message: string, type: 'info' | 'success' | 'error'}>>([]);
+  estadisticasPersonal = signal<any>(null);
 
   constructor(
     private dataSetupService: DataSetupService,
@@ -702,6 +754,7 @@ export class SetupComponent {
     private citaSetupService: CitaSetupService,
     private citaService: CitaService,
     private cirugiaService: CirugiaService,
+    private personalService: PersonalService,
     private router: Router
   ) {}
 
@@ -714,6 +767,9 @@ export class SetupComponent {
     } else if (currentUrl.includes('setup/cirugias')) {
       this.setupMode.set('cirugias');
       this.agregarLog('Sistema de setup de cirugías inicializado', 'info');
+    } else if (currentUrl.includes('setup/personal')) {
+      this.setupMode.set('personal');
+      this.agregarLog('Sistema de setup de personal médico inicializado', 'info');
     } else {
       this.setupMode.set('pacientes');
       this.agregarLog('Sistema de setup de pacientes inicializado', 'info');
@@ -745,6 +801,24 @@ export class SetupComponent {
     }).catch(error => {
       console.error('Error obteniendo cirugías:', error);
       this.totalCirugias.set(0);
+    });
+
+    // Obtener total de personal médico
+    this.personalService.obtenerPersonalSimple().then((personal: any) => {
+      this.totalPersonal.set(personal.length);
+      
+      // Si estamos en modo personal, también cargar estadísticas detalladas
+      if (this.setupMode() === 'personal') {
+        this.personalService.obtenerEstadisticasPersonal().then((estadisticas: any) => {
+          this.estadisticasPersonal.set(estadisticas);
+        }).catch((error: any) => {
+          console.error('Error obteniendo estadísticas de personal:', error);
+          this.estadisticasPersonal.set(null);
+        });
+      }
+    }).catch((error: any) => {
+      console.error('Error obteniendo personal:', error);
+      this.totalPersonal.set(0);
     });
 
     // Para historiales, necesitarías implementar un método similar
@@ -935,10 +1009,71 @@ export class SetupComponent {
     this.agregarLog('⏰ Los índices tardan unos minutos en crearse', 'info');
   }
 
-  cambiarModo(modo: 'pacientes' | 'citas' | 'cirugias') {
+  cambiarModo(modo: 'pacientes' | 'citas' | 'cirugias' | 'personal') {
     this.setupMode.set(modo);
-    const ruta = modo === 'citas' ? '/setup/citas' : modo === 'cirugias' ? '/setup/cirugias' : '/setup/pacientes';
+    const ruta = modo === 'citas' ? '/setup/citas' : 
+                 modo === 'cirugias' ? '/setup/cirugias' : 
+                 modo === 'personal' ? '/setup/personal' : 
+                 '/setup/pacientes';
     this.router.navigate([ruta]);
+  }
+
+  // Métodos para Personal Médico
+  async crearPersonalMedico() {
+    try {
+      this.cargandoPersonal.set(true);
+      this.agregarLog('🚀 Iniciando creación de personal médico...', 'info');
+
+      // Crear personal predefinido
+      await this.personalService.inicializarPersonalPredefinido();
+      
+      this.agregarLog('✅ Personal médico creado exitosamente', 'success');
+      this.agregarLog('   • 3 enfermeras especializadas', 'info');
+      this.agregarLog('   • 3 anestesiólogos certificados', 'info');
+      this.agregarLog('   • Datos completos y certificaciones', 'info');
+
+      // Recargar estadísticas
+      this.cargarEstadisticas();
+      
+    } catch (error: any) {
+      console.error('Error creando personal médico:', error);
+      this.agregarLog('❌ Error creando personal médico: ' + error.message, 'error');
+    } finally {
+      this.cargandoPersonal.set(false);
+    }
+  }
+
+  async limpiarPersonalMedico() {
+    try {
+      this.cargandoPersonal.set(true);
+      this.agregarLog('🗑️ Iniciando limpieza de personal médico...', 'info');
+
+      // Obtener todo el personal para eliminar
+      const personal = await this.personalService.obtenerPersonalSimple();
+      
+      if (personal.length === 0) {
+        this.agregarLog('ℹ️ No hay personal médico para eliminar', 'info');
+        return;
+      }
+
+      // Eliminar cada miembro del personal
+      for (const persona of personal) {
+        if (persona.id) {
+          await this.personalService.eliminarPersonal(persona.id);
+        }
+      }
+      
+      this.agregarLog(`✅ ${personal.length} miembros del personal médico eliminados`, 'success');
+
+      // Recargar estadísticas
+      this.cargarEstadisticas();
+      
+    } catch (error: any) {
+      console.error('Error limpiando personal médico:', error);
+      this.agregarLog('❌ Error limpiando personal médico: ' + error.message, 'error');
+    } finally {
+      this.cargandoPersonal.set(false);
+    }
   }
 
   agregarLog(message: string, type: 'info' | 'success' | 'error') {

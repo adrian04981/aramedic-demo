@@ -108,6 +108,12 @@ import { AuthService, UserRole } from '../../services/auth.service';
               <p>Gestionar tipos de cirugías y requisitos</p>
             </div>
 
+            <div class="action-card" *ngIf="isMedico()" (click)="goToProgramacionCirugias()">
+              <div class="action-icon">🗓️</div>
+              <h4>Programar Cirugías</h4>
+              <p>Planificar, aprobar y gestionar cirugías programadas</p>
+            </div>
+
             <div class="action-card" *ngIf="isAdmin() || isAdminMedico()" (click)="goToPersonal()">
               <div class="action-icon">👨‍⚕️</div>
               <h4>Personal Médico</h4>
@@ -540,6 +546,10 @@ export class DashboardComponent implements OnInit {
 
   goToCirugias() {
     this.router.navigate(['/cirugias']);
+  }
+
+  goToProgramacionCirugias() {
+    this.router.navigate(['/programacion-cirugias']);
   }
 
   goToPersonal() {

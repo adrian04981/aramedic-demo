@@ -20,8 +20,10 @@ import {
   EstadoPersonal,
   TipoDocumento,
   TurnoTrabajo,
+  MEDICOS_PREDEFINIDOS,
   ENFERMERAS_PREDEFINIDAS,
   ANESTESIOLOGOS_PREDEFINIDOS,
+  CERTIFICACIONES_MEDICOS,
   CERTIFICACIONES_ENFERMERAS,
   CERTIFICACIONES_ANESTESIOLOGOS
 } from '../models/personal.interface';
@@ -184,6 +186,18 @@ export class PersonalService {
 
   async inicializarPersonalPredefinido(): Promise<void> {
     console.log('Inicializando personal predefinido...');
+    
+    // Crear médicos
+    for (const medico of MEDICOS_PREDEFINIDOS) {
+      const existe = await this.buscarPorDocumento(medico.numeroDocumento);
+      if (!existe) {
+        await this.crearPersonal({
+          ...medico,
+          activo: true
+        });
+        console.log(`Médico creado: ${medico.nombres} ${medico.apellidos}`);
+      }
+    }
     
     // Crear enfermeras
     for (const enfermera of ENFERMERAS_PREDEFINIDAS) {

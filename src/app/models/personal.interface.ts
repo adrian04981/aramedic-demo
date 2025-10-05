@@ -22,6 +22,7 @@ export interface Personal {
 }
 
 export enum TipoPersonal {
+  MEDICO = 'medico',
   ENFERMERA = 'enfermera',
   ANESTESIOLOGO = 'anestesiologo'
 }
@@ -162,6 +163,102 @@ export const ANESTESIOLOGOS_PREDEFINIDOS = [
     fechaIngreso: new Date('2019-01-20'),
     observaciones: 'Amplia experiencia en cirugías reconstructivas'
   }
+];
+
+// Datos predefinidos para médicos
+export const MEDICOS_PREDEFINIDOS = [
+  {
+    nombres: 'Dr. Juan Carlos',
+    apellidos: 'Rodríguez Mendoza',
+    tipoDocumento: TipoDocumento.CEDULA,
+    numeroDocumento: '7890123456',
+    telefono: '+57 306 789 0123',
+    email: 'juan.rodriguez@aramedic.com',
+    tipoPersonal: TipoPersonal.MEDICO,
+    estado: EstadoPersonal.ACTIVO,
+    fechaNacimiento: new Date('1970-04-12'),
+    direccion: 'Calle 95 #20-15, Bogotá',
+    experienciaAnios: 20,
+    certificaciones: ['Cirugía Plástica', 'Cirugía Reconstructiva', 'Liposucción', 'Aumento Mamario'],
+    turnoPreferido: TurnoTrabajo.DISPONIBILIDAD_COMPLETA,
+    salarioBase: 15000000,
+    fechaIngreso: new Date('2015-01-10'),
+    observaciones: 'Cirujano plástico principal, especialista en procedimientos estéticos'
+  },
+  {
+    nombres: 'Dra. María Isabel',
+    apellidos: 'González Vargas',
+    tipoDocumento: TipoDocumento.CEDULA,
+    numeroDocumento: '8901234567',
+    telefono: '+57 307 890 1234',
+    email: 'maria.gonzalez@aramedic.com',
+    tipoPersonal: TipoPersonal.MEDICO,
+    estado: EstadoPersonal.ACTIVO,
+    fechaNacimiento: new Date('1975-08-25'),
+    direccion: 'Carrera 15 #85-30, Medellín',
+    experienciaAnios: 18,
+    certificaciones: ['Cirugía Plástica', 'Rinoplastia', 'Lifting Facial', 'Cirugía de Párpados'],
+    turnoPreferido: TurnoTrabajo.MANANA,
+    salarioBase: 14000000,
+    fechaIngreso: new Date('2016-05-20'),
+    observaciones: 'Especialista en cirugías faciales y rejuvenecimiento'
+  },
+  {
+    nombres: 'Dr. Roberto',
+    apellidos: 'Martínez Acosta',
+    tipoDocumento: TipoDocumento.CEDULA,
+    numeroDocumento: '9012345678',
+    telefono: '+57 308 901 2345',
+    email: 'roberto.martinez@aramedic.com',
+    tipoPersonal: TipoPersonal.MEDICO,
+    estado: EstadoPersonal.ACTIVO,
+    fechaNacimiento: new Date('1980-11-15'),
+    direccion: 'Avenida 19 #102-45, Cali',
+    experienciaAnios: 12,
+    certificaciones: ['Cirugía Plástica', 'Abdominoplastia', 'Liposucción', 'Cirugía Corporal'],
+    turnoPreferido: TurnoTrabajo.TARDE,
+    salarioBase: 12500000,
+    fechaIngreso: new Date('2018-09-01'),
+    observaciones: 'Especialista en contorno corporal y cirugías de abdomen'
+  },
+  {
+    nombres: 'Dra. Ana Cristina',
+    apellidos: 'López Hernández',
+    tipoDocumento: TipoDocumento.CEDULA,
+    numeroDocumento: '0123456789',
+    telefono: '+57 309 012 3456',
+    email: 'ana.lopez@aramedic.com',
+    tipoPersonal: TipoPersonal.MEDICO,
+    estado: EstadoPersonal.ACTIVO,
+    fechaNacimiento: new Date('1983-06-30'),
+    direccion: 'Calle 72 #11-25, Bucaramanga',
+    experienciaAnios: 10,
+    certificaciones: ['Cirugía Plástica', 'Aumento Mamario', 'Cirugía de Glúteos', 'Procedimientos Mínimamente Invasivos'],
+    turnoPreferido: TurnoTrabajo.ROTATIVO,
+    salarioBase: 11800000,
+    fechaIngreso: new Date('2019-03-15'),
+    observaciones: 'Especialista en cirugías mamarias y de glúteos'
+  }
+];
+
+// Certificaciones comunes por tipo de personal
+export const CERTIFICACIONES_MEDICOS = [
+  'Cirugía Plástica',
+  'Cirugía Reconstructiva',
+  'Cirugía Estética',
+  'Liposucción',
+  'Abdominoplastia',
+  'Aumento Mamario',
+  'Reducción Mamaria',
+  'Rinoplastia',
+  'Lifting Facial',
+  'Cirugía de Párpados',
+  'Cirugía de Glúteos',
+  'Contorno Corporal',
+  'Procedimientos Mínimamente Invasivos',
+  'Cirugía Láser',
+  'Injertos de Grasa',
+  'Medicina Estética'
 ];
 
 // Certificaciones comunes por tipo de personal

@@ -184,6 +184,22 @@ export class AuthService {
     }
   }
 
+  async getMedicos(): Promise<UserRole[]> {
+    try {
+      const usersCollection = collection(this.firestore, 'users');
+      const q = query(
+        usersCollection,
+        where('role', 'in', ['medico', 'administrador_medico']),
+        where('isActive', '==', true)
+      );
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ ...doc.data() } as UserRole));
+    } catch (error) {
+      console.error('Error obteniendo médicos:', error);
+      return [];
+    }
+  }
+
   async updateUserStatus(uid: string, isActive: boolean): Promise<void> {
     try {
       await setDoc(doc(this.firestore, 'users', uid), { isActive }, { merge: true });
@@ -214,6 +230,79 @@ export class AuthService {
       await setDoc(doc(this.firestore, 'users', uid), updateData, { merge: true });
     } catch (error) {
       console.error('Error actualizando usuario:', error);
+      throw error;
+    }
+  }
+
+  async crearUsuariosMedicosDemo(): Promise<void> {
+    try {
+      const medicosDemo: Omit<UserRole, 'uid' | 'createdAt'>[] = [
+        {
+          email: 'dr.rodriguez@aramedic.com',
+          role: 'medico',
+          firstName: 'Juan Carlos',
+          lastName: 'Rodríguez',
+          phone: '+57 306 789 0123',
+          specialty: 'Cirugía Plástica y Reconstructiva',
+          licenseNumber: 'MP-12345',
+          isActive: true
+        },
+        {
+          email: 'dra.gonzalez@aramedic.com',
+          role: 'medico',
+          firstName: 'María Isabel',
+          lastName: 'González',
+          phone: '+57 307 890 1234',
+          specialty: 'Cirugía Facial y Rinoplastia',
+          licenseNumber: 'MP-12346',
+          isActive: true
+        },
+        {
+          email: 'dr.martinez@aramedic.com',
+          role: 'medico',
+          firstName: 'Roberto',
+          lastName: 'Martínez',
+          phone: '+57 308 901 2345',
+          specialty: 'Cirugía Corporal y Liposucción',
+          licenseNumber: 'MP-12347',
+          isActive: true
+        },
+        {
+          email: 'dra.lopez@aramedic.com',
+          role: 'administrador_medico',
+          firstName: 'Ana Cristina',
+          lastName: 'López',
+          phone: '+57 309 012 3456',
+          specialty: 'Cirugía Mamaria y de Glúteos',
+          licenseNumber: 'MP-12348',
+          isActive: true
+        }
+      ];
+
+      for (const medicoData of medicosDemo) {
+        const userRole: UserRole = {
+          ...medicoData,
+          uid: '', // Se generará automáticamente
+          createdAt: new Date()
+        };
+
+        // Verificar si ya existe un usuario con este email
+        const usersCollection = collection(this.firestore, 'users');
+        const q = query(usersCollection, where('email', '==', medicoData.email));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          // Crear documento directamente en Firestore con un ID generado
+          const docRef = doc(collection(this.firestore, 'users'));
+          const userWithId = { ...userRole, uid: docRef.id };
+          await setDoc(docRef, userWithId);
+          console.log(`Usuario médico creado: ${medicoData.firstName} ${medicoData.lastName}`);
+        } else {
+          console.log(`Usuario ya existe: ${medicoData.email}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error creando usuarios médicos demo:', error);
       throw error;
     }
   }

@@ -36,6 +36,11 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['administrador', 'administrador_medico', 'medico'])]
   },
   {
+    path: 'programacion-cirugias',
+    loadComponent: () => import('./components/programacion-cirugia/programacion-cirugia.component').then(m => m.ProgramacionCirugiaComponent),
+    canActivate: [authGuard, roleGuard(['administrador', 'administrador_medico', 'medico'])]
+  },
+  {
     path: 'personal',
     loadComponent: () => import('./components/personal/personal.component').then(m => m.PersonalComponent),
     canActivate: [authGuard, roleGuard(['administrador', 'administrador_medico'])]
@@ -54,6 +59,10 @@ export const routes: Routes = [
   },
   {
     path: 'setup/personal',
+    loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
+  },
+  {
+    path: 'setup/programacion-cirugias',
     loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
   },
   {

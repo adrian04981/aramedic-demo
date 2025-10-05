@@ -102,6 +102,12 @@ import { AuthService, UserRole } from '../../services/auth.service';
               <p>Gestionar citas médicas y horarios</p>
             </div>
 
+            <div class="action-card" (click)="goToCirugias()">
+              <div class="action-icon">🏥</div>
+              <h4>Cirugías</h4>
+              <p>Gestionar tipos de cirugías y requisitos</p>
+            </div>
+
             <div class="action-card" *ngIf="isMedico()" (click)="goToPatients()">
               <div class="action-icon">🩺</div>
               <h4>Historial Médico</h4>
@@ -524,6 +530,10 @@ export class DashboardComponent implements OnInit {
 
   goToAppointments() {
     this.router.navigate(['/citas']);
+  }
+
+  goToCirugias() {
+    this.router.navigate(['/cirugias']);
   }
 
   goToPatients() {

@@ -31,11 +31,20 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'cirugias',
+    loadComponent: () => import('./components/cirugias/cirugias.component').then(m => m.CirugiasComponent),
+    canActivate: [authGuard, roleGuard(['administrador', 'administrador_medico', 'medico'])]
+  },
+  {
     path: 'setup/pacientes',
     loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
   },
   {
     path: 'setup/citas',
+    loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
+  },
+  {
+    path: 'setup/cirugias',
     loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
   },
   {

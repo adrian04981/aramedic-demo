@@ -1,9 +1,50 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Reglas temporales para desarrollo - permitir lectura/escritura a usuarios autenticados
+    // Reglas para la colección de usuarios
+    match /users/{userId} {
+      // Los usuarios pueden leer y escribir su propio documento
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Los administradores pueden leer y escribir todos los documentos de usuarios
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['administrador', 'administrador_medico'];
+      
+      // Permitir lectura para usuarios autenticados (necesario para el login)
+      allow read: if request.auth != null;
+    }
+    
+    // Reglas específicas para tipos de cirugía
+    match /tipos_cirugia/{document} {
+      // Permitir todo para desarrollo, pero preparado para restricciones futuras
+      allow read, write: if true;
+      // Futuro: allow read, write: if request.auth != null;
+    }
+    
+    // Reglas específicas para checklist de cirugías
+    match /checklist_cirugias/{document} {
+      // Permitir todo para desarrollo
+      allow read, write: if true;
+      // Futuro: allow read, write: if request.auth != null;
+    }
+    
+    // Reglas para pacientes
+    match /pacientes/{document} {
+      // Permitir todo para desarrollo
+      allow read, write: if true;
+      // Futuro: restricciones por usuario y rol
+    }
+    
+    // Reglas para citas
+    match /citas/{document} {
+      // Permitir todo para desarrollo
+      allow read, write: if true;
+      // Futuro: restricciones por paciente y médico
+    }
+    
+    // Reglas por defecto: permitir todo temporalmente para seed data
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if true;
     }
   }
 }

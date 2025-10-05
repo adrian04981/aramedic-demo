@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataSetupService } from '../../services/data-setup.service';
 import { CitaSetupService } from '../../services/cita-setup.service';
 import { PacienteService } from '../../services/paciente.service';
 import { CitaService } from '../../services/cita.service';
+import { CirugiaService } from '../../services/cirugia.service';
 
 @Component({
   selector: 'app-setup',
@@ -15,7 +16,7 @@ import { CitaService } from '../../services/cita.service';
       <div class="setup-card">
         <div class="setup-header">
           <h1>🔧 Configuración de Datos de Prueba</h1>
-          <p>{{setupMode() === 'citas' ? 'Sistema de setup para Citas y Agendamiento' : 'Sistema de setup para Pacientes y Usuarios'}}</p>
+          <p>{{setupMode() === 'citas' ? 'Sistema de setup para Citas y Agendamiento' : setupMode() === 'cirugias' ? 'Sistema de setup para Tipos de Cirugías' : 'Sistema de setup para Pacientes y Usuarios'}}</p>
           
           <!-- Navegación entre modos -->
           <div class="setup-nav">
@@ -30,6 +31,12 @@ import { CitaService } from '../../services/cita.service';
               [class.active]="setupMode() === 'citas'"
               (click)="cambiarModo('citas')">
               📅 Setup Citas
+            </button>
+            <button 
+              class="nav-btn" 
+              [class.active]="setupMode() === 'cirugias'"
+              (click)="cambiarModo('cirugias')">
+              🏥 Setup Cirugías
             </button>
           </div>
         </div>
@@ -51,12 +58,16 @@ import { CitaService } from '../../services/cita.service';
                 <span class="stat-number">{{totalCitas()}}</span>
                 <span class="stat-label">Citas Programadas</span>
               </div>
+              <div class="stat-item">
+                <span class="stat-number">{{totalCirugias()}}</span>
+                <span class="stat-label">Tipos de Cirugía</span>
+              </div>
             </div>
           </div>
 
           <!-- Acciones de setup -->
           <div class="actions-section">
-            <h3>⚙️ {{setupMode() === 'citas' ? 'Gestión de Citas de Prueba' : 'Gestión de Pacientes de Prueba'}}</h3>
+            <h3>⚙️ {{setupMode() === 'citas' ? 'Gestión de Citas de Prueba' : setupMode() === 'cirugias' ? 'Gestión de Tipos de Cirugías' : 'Gestión de Pacientes de Prueba'}}</h3>
             
             <!-- Sección de Pacientes (solo visible en modo pacientes) -->
             @if (setupMode() === 'pacientes') {
@@ -118,13 +129,73 @@ import { CitaService } from '../../services/cita.service';
             </div>
             }
 
+            <!-- Sección de Cirugías (solo visible en modo cirugías) -->
+            @if (setupMode() === 'cirugias') {
+            <div class="action-card">
+              <div class="action-info">
+                <h4>🏥 Crear Tipos de Cirugías</h4>
+                <p>Genera tipos de cirugías estéticas predefinidos con sus checklist de requisitos mínimos para una clínica estética.</p>
+                <ul>
+                  <li>✅ 10 tipos de cirugías comunes (Liposucción, Rinoplastia, Mamoplastia, etc.)</li>
+                  <li>✅ Checklist de requisitos mínimos por cirugía</li>
+                  <li>✅ Exámenes preoperatorios estándar</li>
+                  <li>✅ Preparación y cuidados postoperatorios</li>
+                  <li>✅ Niveles de complejidad y costos base</li>
+                </ul>
+              </div>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-primary" 
+                  (click)="crearTiposCirugias()"
+                  [disabled]="cargandoCirugias()">
+                  {{cargandoCirugias() ? 'Creando...' : '+ Crear Tipos de Cirugías'}}
+                </button>
+                <button 
+                  class="btn btn-secondary" 
+                  (click)="limpiarTiposCirugias()"
+                  [disabled]="cargandoCirugias()">
+                  {{cargandoCirugias() ? 'Limpiando...' : '🗑️ Limpiar Cirugías'}}
+                </button>
+              </div>
+            </div>
+
+            <!-- Sección de Índices de Firestore -->
+            <div class="action-card">
+              <div class="action-info">
+                <h4>🔗 Configurar Índices de Firestore</h4>
+                <p>Los índices son necesarios para consultas complejas en Firestore. Crea automáticamente los índices requeridos para el módulo de cirugías.</p>
+                <div class="alert-warning">
+                  <strong>⚠️ Importante:</strong> Los índices se crean en Firebase Console. Este botón te proporcionará los enlaces directos para crearlos.
+                </div>
+                <ul>
+                  <li>🔍 Índice para tipos_cirugia (activo + nombre)</li>
+                  <li>🔍 Índice para checklist_cirugias (idTipoCirugia + activo)</li>
+                  <li>🔍 Índice para consultas con filtros múltiples</li>
+                  <li>🔍 Enlaces directos a Firebase Console</li>
+                </ul>
+              </div>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-info" 
+                  (click)="mostrarInstruccionesIndices()">
+                  📋 Mostrar Instrucciones de Índices
+                </button>
+                <button 
+                  class="btn btn-primary" 
+                  (click)="abrirEnlacesIndices()">
+                  🔗 Abrir Enlaces de Índices
+                </button>
+              </div>
+            </div>
+            }
+
             <!-- Sección de limpieza (visible en ambos modos) -->
             <div class="action-card warning">
               <div class="action-info">
                 <h4>🗑️ Limpiar Datos de Prueba</h4>
-                <p>{{setupMode() === 'citas' ? 'Elimina todas las citas de prueba.' : 'Elimina todos los datos de pacientes y historiales.'}} <strong>Esta acción no se puede deshacer.</strong></p>
+                <p>{{setupMode() === 'citas' ? 'Elimina todas las citas de prueba.' : setupMode() === 'cirugias' ? 'Elimina todos los tipos de cirugías.' : 'Elimina todos los datos de pacientes y historiales.'}} <strong>Esta acción no se puede deshacer.</strong></p>
                 <div class="warning-note">
-                  ⚠️ <strong>Atención:</strong> {{setupMode() === 'citas' ? 'Para citas puedes usar el botón de limpiar arriba.' : 'Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.'}}
+                  ⚠️ <strong>Atención:</strong> {{setupMode() === 'citas' ? 'Para citas puedes usar el botón de limpiar arriba.' : setupMode() === 'cirugias' ? 'Para cirugías puedes usar el botón de limpiar arriba.' : 'Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.'}}
                 </div>
               </div>
               <div class="action-buttons">
@@ -134,6 +205,13 @@ import { CitaService } from '../../services/cita.service';
                   (click)="limpiarCitas()"
                   [disabled]="cargandoCitas()">
                   {{cargandoCitas() ? 'Limpiando...' : '🗑️ Limpiar Todas las Citas'}}
+                </button>
+                } @else if (setupMode() === 'cirugias') {
+                <button 
+                  class="btn btn-danger" 
+                  (click)="limpiarTiposCirugias()"
+                  [disabled]="cargandoCirugias()">
+                  {{cargandoCirugias() ? 'Limpiando...' : '🗑️ Limpiar Todas las Cirugías'}}
                 </button>
                 } @else {
                 <button 
@@ -495,6 +573,19 @@ import { CitaService } from '../../services/cita.service';
       color: #3b82f6;
     }
 
+    .alert-warning {
+      background-color: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      color: #92400e;
+    }
+
+    .alert-warning strong {
+      color: #78350f;
+    }
+
     .btn {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -527,6 +618,16 @@ import { CitaService } from '../../services/cita.service';
 
     .btn-secondary:hover {
       background: #4b5563;
+    }
+
+    .btn-info {
+      background: #06b6d4;
+      color: white;
+    }
+
+    .btn-info:hover:not(:disabled) {
+      background: #0891b2;
+      transform: translateY(-1px);
     }
 
     .btn-outline {
@@ -588,9 +689,11 @@ export class SetupComponent {
   totalPacientes = signal(0);
   totalHistoriales = signal(0);
   totalCitas = signal(0);
+  totalCirugias = signal(0);
   cargandoPacientes = signal(false);
   cargandoCitas = signal(false);
-  setupMode = signal<'pacientes' | 'citas'>('pacientes');
+  cargandoCirugias = signal(false);
+  setupMode = signal<'pacientes' | 'citas' | 'cirugias'>('pacientes');
   logs = signal<Array<{timestamp: Date, message: string, type: 'info' | 'success' | 'error'}>>([]);
 
   constructor(
@@ -598,6 +701,7 @@ export class SetupComponent {
     private pacienteService: PacienteService,
     private citaSetupService: CitaSetupService,
     private citaService: CitaService,
+    private cirugiaService: CirugiaService,
     private router: Router
   ) {}
 
@@ -607,6 +711,9 @@ export class SetupComponent {
     if (currentUrl.includes('setup/citas')) {
       this.setupMode.set('citas');
       this.agregarLog('Sistema de setup de citas inicializado', 'info');
+    } else if (currentUrl.includes('setup/cirugias')) {
+      this.setupMode.set('cirugias');
+      this.agregarLog('Sistema de setup de cirugías inicializado', 'info');
     } else {
       this.setupMode.set('pacientes');
       this.agregarLog('Sistema de setup de pacientes inicializado', 'info');
@@ -615,22 +722,34 @@ export class SetupComponent {
     this.cargarEstadisticas();
   }
 
-  async cargarEstadisticas() {
-    try {
-      // Obtener total de pacientes
-      const totalPacientes = await this.pacienteService.obtenerContadorPacientes();
+  cargarEstadisticas() {
+    // Obtener total de pacientes
+    this.pacienteService.obtenerContadorPacientes().then(totalPacientes => {
       this.totalPacientes.set(totalPacientes);
+    }).catch(error => {
+      console.error('Error obteniendo pacientes:', error);
+      this.totalPacientes.set(0);
+    });
 
-      // Obtener total de citas
-      const totalCitas = await this.citaService.obtenerContadorCitas();
+    // Obtener total de citas
+    this.citaService.obtenerContadorCitas().then(totalCitas => {
       this.totalCitas.set(totalCitas);
+    }).catch(error => {
+      console.error('Error obteniendo citas:', error);
+      this.totalCitas.set(0);
+    });
 
-      // Para historiales, necesitarías implementar un método similar
-      // Por ahora usaremos 0 como placeholder
-      this.totalHistoriales.set(0);
-    } catch (error) {
-      console.error('Error cargando estadísticas:', error);
-    }
+    // Obtener total de tipos de cirugía - usar una consulta simple sin orderBy
+    this.cirugiaService.obtenerTiposCirugiaSimple().then(tipos => {
+      this.totalCirugias.set(tipos.length);
+    }).catch(error => {
+      console.error('Error obteniendo cirugías:', error);
+      this.totalCirugias.set(0);
+    });
+
+    // Para historiales, necesitarías implementar un método similar
+    // Por ahora usaremos 0 como placeholder
+    this.totalHistoriales.set(0);
   }
 
   async crearPacientesFicticios() {
@@ -697,9 +816,128 @@ export class SetupComponent {
     }
   }
 
-  cambiarModo(modo: 'pacientes' | 'citas') {
+  async crearTiposCirugias() {
+    this.cargandoCirugias.set(true);
+    this.agregarLog('Iniciando creación de tipos de cirugías...', 'info');
+
+    try {
+      await this.cirugiaService.inicializarTiposCirugiasPredefinidos();
+      this.agregarLog('✅ Tipos de cirugías creados exitosamente', 'success');
+      this.agregarLog('Se crearon 10 tipos de cirugías estéticas con sus checklist completos', 'info');
+      this.cargarEstadisticas();
+    } catch (error) {
+      console.error('Error creando tipos de cirugías:', error);
+      this.agregarLog('❌ Error creando tipos de cirugías', 'error');
+    } finally {
+      this.cargandoCirugias.set(false);
+    }
+  }
+
+  async limpiarTiposCirugias() {
+    this.cargandoCirugias.set(true);
+    this.agregarLog('Iniciando limpieza de tipos de cirugías...', 'info');
+
+    try {
+      await this.cirugiaService.limpiarTiposCirugias();
+      this.agregarLog('✅ Tipos de cirugías eliminados exitosamente', 'success');
+      this.cargarEstadisticas();
+    } catch (error) {
+      console.error('Error limpiando tipos de cirugías:', error);
+      this.agregarLog('❌ Error limpiando tipos de cirugías', 'error');
+    } finally {
+      this.cargandoCirugias.set(false);
+    }
+  }
+
+  // ============ MÉTODOS PARA ÍNDICES DE FIRESTORE ============
+  
+  mostrarInstruccionesIndices() {
+    this.agregarLog('📋 Instrucciones completas para crear índices de Firestore:', 'info');
+    this.agregarLog('', 'info');
+    
+    // Información general
+    this.agregarLog('🔍 ¿Por qué necesitas índices?', 'info');
+    this.agregarLog('   • Firestore requiere índices para consultas con múltiples filtros', 'info');
+    this.agregarLog('   • Los índices mejoran el rendimiento de las consultas', 'info');
+    this.agregarLog('   • Sin índices, algunas consultas fallarán con error', 'info');
+    this.agregarLog('', 'info');
+    
+    // Métodos para crear índices
+    this.agregarLog('📝 3 formas de crear índices:', 'info');
+    this.agregarLog('', 'info');
+    this.agregarLog('1️⃣ MÉTODO AUTOMÁTICO (Recomendado):', 'success');
+    this.agregarLog('   • Haz clic en el enlace del error en la consola del navegador', 'info');
+    this.agregarLog('   • Firebase te lleva directamente a crear el índice', 'info');
+    this.agregarLog('   • Haz clic en "Crear índice" y espera unos minutos', 'info');
+    this.agregarLog('', 'info');
+    
+    this.agregarLog('2️⃣ MÉTODO MANUAL (Firebase Console):', 'info');
+    this.agregarLog('   • Usa el botón "Abrir Enlaces de Índices" de abajo', 'info');
+    this.agregarLog('   • Ve a Firebase Console > Firestore > Índices', 'info');
+    this.agregarLog('   • Crea índices manualmente para las colecciones', 'info');
+    this.agregarLog('', 'info');
+    
+    this.agregarLog('3️⃣ MÉTODO CLI (Firebase CLI):', 'info');
+    this.agregarLog('   • El proyecto ya tiene firestore.indexes.json configurado', 'info');
+    this.agregarLog('   • Ejecuta: firebase deploy --only firestore:indexes', 'info');
+    this.agregarLog('   • Esto despliega todos los índices automáticamente', 'info');
+    this.agregarLog('', 'info');
+    
+    // Índices específicos necesarios
+    this.agregarLog('� Índices requeridos para el módulo de cirugías:', 'success');
+    this.agregarLog('', 'info');
+    this.agregarLog('🏥 Collection: tipos_cirugia', 'info');
+    this.agregarLog('   • activo (Ascendente) + nombre (Ascendente)', 'info');
+    this.agregarLog('   • activo (Ascendente) + categoria (Ascendente)', 'info');
+    this.agregarLog('   • activo (Ascendente) + fechaCreacion (Descendente)', 'info');
+    this.agregarLog('', 'info');
+    
+    this.agregarLog('📋 Collection: checklist_cirugias', 'info');
+    this.agregarLog('   • idTipoCirugia (Ascendente) + activo (Ascendente)', 'info');
+    this.agregarLog('   • categoria (Ascendente) + activo (Ascendente)', 'info');
+    this.agregarLog('', 'info');
+    
+    this.agregarLog('⏰ Tiempo de creación: Los índices tardan 2-5 minutos en estar listos', 'info');
+    this.agregarLog('🔄 Después de crear los índices, recarga la página para usar las consultas ordenadas', 'success');
+  }
+
+  abrirEnlacesIndices() {
+    this.agregarLog('🔍 Verificando estado de índices de Firestore...', 'info');
+    
+    // Obtener enlaces desde el servicio
+    const enlaces = this.cirugiaService.generarEnlacesIndices();
+    
+    // Verificar índices existentes
+    this.cirugiaService.verificarIndicesRequeridos().then(resultados => {
+      this.agregarLog('📊 Estado actual de índices:', 'info');
+      this.agregarLog(`   • Tipos ordenados: ${resultados.tiposOrdenados ? '✅' : '❌'}`, resultados.tiposOrdenados ? 'success' : 'error');
+      this.agregarLog(`   • Checklist por tipo: ${resultados.checklistPorTipo ? '✅' : '❌'}`, resultados.checklistPorTipo ? 'success' : 'error');
+      
+      if (!resultados.tiposOrdenados || !resultados.checklistPorTipo) {
+        this.agregarLog('⚠️ Algunos índices faltan. Abriendo enlaces para crearlos...', 'info');
+      } else {
+        this.agregarLog('🎉 Todos los índices principales están disponibles', 'success');
+      }
+    });
+
+    this.agregarLog('🔗 Abriendo enlaces para gestionar índices...', 'info');
+    
+    enlaces.forEach((enlace, index) => {
+      setTimeout(() => {
+        window.open(enlace.url, '_blank');
+        this.agregarLog(`✅ Abierto: ${enlace.nombre}`, 'success');
+        this.agregarLog(`   ${enlace.descripcion}`, 'info');
+      }, index * 1500); // Esperar 1.5 segundos entre cada apertura
+    });
+
+    this.agregarLog('💡 Los enlaces se abren con intervalos para evitar bloqueo del navegador', 'info');
+    this.agregarLog('� En Firebase Console, haz clic en "Crear índice" y confirma', 'info');
+    this.agregarLog('⏰ Los índices tardan unos minutos en crearse', 'info');
+  }
+
+  cambiarModo(modo: 'pacientes' | 'citas' | 'cirugias') {
     this.setupMode.set(modo);
-    const ruta = modo === 'citas' ? '/setup/citas' : '/setup/pacientes';
+    const ruta = modo === 'citas' ? '/setup/citas' : modo === 'cirugias' ? '/setup/cirugias' : '/setup/pacientes';
     this.router.navigate([ruta]);
   }
 

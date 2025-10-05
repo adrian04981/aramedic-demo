@@ -81,16 +81,46 @@ import { AuthService } from '../../services/auth.service';
           <h3>Usuarios de Demostración</h3>
           <div class="demo-users">
             <div class="demo-user">
-              <strong>Administrador:</strong><br>
-              admin@aramedic.com / admin123
+              <div class="demo-user-info">
+                <strong>Administrador:</strong><br>
+                <span class="credentials">admin@aramedic.com / admin123</span>
+              </div>
+              <button 
+                type="button" 
+                class="btn-demo-login"
+                (click)="loginWithDemo('admin@aramedic.com', 'admin123')"
+                [disabled]="loading"
+              >
+                Login
+              </button>
             </div>
             <div class="demo-user">
-              <strong>Admin Médico:</strong><br>
-              adminmedico@aramedic.com / admin123
+              <div class="demo-user-info">
+                <strong>Admin Médico:</strong><br>
+                <span class="credentials">adminmedico@aramedic.com / admin123</span>
+              </div>
+              <button 
+                type="button" 
+                class="btn-demo-login"
+                (click)="loginWithDemo('adminmedico@aramedic.com', 'admin123')"
+                [disabled]="loading"
+              >
+                Login
+              </button>
             </div>
             <div class="demo-user">
-              <strong>Médico:</strong><br>
-              medico@aramedic.com / medico123
+              <div class="demo-user-info">
+                <strong>Médico:</strong><br>
+                <span class="credentials">medico@aramedic.com / medico123</span>
+              </div>
+              <button 
+                type="button" 
+                class="btn-demo-login"
+                (click)="loginWithDemo('medico@aramedic.com', 'medico123')"
+                [disabled]="loading"
+              >
+                Login
+              </button>
             </div>
           </div>
         </div>
@@ -280,14 +310,60 @@ import { AuthService } from '../../services/auth.service';
 
     .demo-user {
       background: #f9fafb;
-      padding: 0.75rem;
+      padding: 1rem;
       border-radius: 0.5rem;
       font-size: 0.875rem;
       border-left: 3px solid #3b82f6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .demo-user-info {
+      flex: 1;
     }
 
     .demo-user strong {
       color: #374151;
+    }
+
+    .credentials {
+      color: #6b7280;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+    }
+
+    .btn-demo-login {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      min-width: 60px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-demo-login:hover:not(:disabled) {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    .btn-demo-login:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-demo-login:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* Responsive */
@@ -331,6 +407,26 @@ export class LoginComponent {
 
     try {
       const { email, password } = this.loginForm.value;
+      await this.authService.login(email, password);
+      // La navegación se maneja en el servicio
+    } catch (error: any) {
+      this.errorMessage = this.getErrorMessage(error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async loginWithDemo(email: string, password: string) {
+    this.loading = true;
+    this.errorMessage = '';
+    
+    // Llenar el formulario con las credenciales de demo
+    this.loginForm.patchValue({
+      email: email,
+      password: password
+    });
+
+    try {
       await this.authService.login(email, password);
       // La navegación se maneja en el servicio
     } catch (error: any) {

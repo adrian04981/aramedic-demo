@@ -76,6 +76,12 @@ import { AuthService, UserRole } from '../../services/auth.service';
               <p>Crear, editar y administrar usuarios del sistema</p>
             </div>
 
+            <div class="action-card" *ngIf="isAdmin()" (click)="goToSetup()">
+              <div class="action-icon">🔧</div>
+              <h4>Setup de Datos</h4>
+              <p>Configurar datos de prueba y sistema</p>
+            </div>
+
             <!-- Admin Medico Actions -->
             <div class="action-card" *ngIf="isAdminMedico()" (click)="goToMedicos()">
               <div class="action-icon">👨‍⚕️</div>
@@ -506,6 +512,10 @@ export class DashboardComponent implements OnInit {
 
   goToPacientes() {
     this.router.navigate(['/pacientes']);
+  }
+
+  goToSetup() {
+    this.router.navigate(['/setup/pacientes']);
   }
 
   goToMedicos() {

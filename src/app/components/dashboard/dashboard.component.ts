@@ -9,22 +9,8 @@ import { AuthService, UserRole } from '../../services/auth.service';
   imports: [CommonModule],
   template: `
     <div class="dashboard-container">
-      <!-- Header -->
-      <header class="header">
-        <div class="header-content">
-          <div class="logo">
-            <h1>AraMedic</h1>
-          </div>
-          <div class="user-info">
-            <span class="welcome">Bienvenido, {{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-            <span class="role-badge" [ngClass]="currentUser?.role">{{ getRoleDisplay(currentUser?.role) }}</span>
-            <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
-          </div>
-        </div>
-      </header>
-
       <!-- Main Content -->
-      <main class="main-content">
+      <div class="main-content">
         <div class="dashboard-header">
           <h2>Dashboard</h2>
           <p>Panel de control - {{ getRoleDisplay(currentUser?.role) }}</p>
@@ -153,81 +139,13 @@ import { AuthService, UserRole } from '../../services/auth.service';
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   `,
   styles: [`
     .dashboard-container {
       min-height: 100vh;
       background: #f8fafc;
-    }
-
-    /* Header */
-    .header {
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 1rem 0;
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo h1 {
-      color: #3b82f6;
-      margin: 0;
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .welcome {
-      color: #374151;
-      font-weight: 500;
-    }
-
-    .role-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: white;
-    }
-
-    .role-badge.administrador {
-      background: #dc2626;
-    }
-
-    .role-badge.administrador_medico {
-      background: #7c3aed;
-    }
-
-    .role-badge.medico {
-      background: #059669;
-    }
-
-    .btn-logout {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .btn-logout:hover {
-      background: #dc2626;
     }
 
     /* Main Content */

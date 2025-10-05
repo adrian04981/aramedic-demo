@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { ProgramacionCirugiaService } from '../../services/programacion-cirugia.service';
 import { PacienteService } from '../../services/paciente.service';
 import { CirugiaService } from '../../services/cirugia.service';
@@ -672,7 +674,12 @@ import { Personal } from '../../models/personal.interface';
                         
                         @if (cirugiaSeleccionada()?.observaciones?.medicacionPrescrita && (cirugiaSeleccionada()?.observaciones?.medicacionPrescrita?.length || 0) > 0) {
                           <div class="medicacion-prescrita">
-                            <h5>Medicación Prescrita</h5>
+                            <div class="medicacion-header">
+                              <h5>Medicación Prescrita</h5>
+                              <button class="btn btn-sm btn-info" (click)="descargarReceta(cirugiaSeleccionada()!)" title="Descargar Receta">
+                                📄 Descargar Receta
+                              </button>
+                            </div>
                             @for (med of cirugiaSeleccionada()?.observaciones?.medicacionPrescrita; track med?.medicamento || $index) {
                               <div class="medicamento-detalle">
                                 <p><strong>{{med?.medicamento}}</strong> - {{med?.dosis}}</p>
@@ -1443,6 +1450,22 @@ import { Personal } from '../../models/personal.interface';
 
     .medicacion-prescrita {
       margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 0.5rem;
+      border: 1px solid #e9ecef;
+    }
+
+    .medicacion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .medicacion-header h5 {
+      margin: 0;
+      color: #495057;
     }
 
     .medicamento-detalle {
@@ -2322,17 +2345,157 @@ export class ProgramacionCirugiaComponent implements OnInit {
   }
 
   async descargarReceta(cirugia: CirugiaProgramada) {
-    if (!cirugia.observaciones?.medicacionPrescrita?.length) {
-      alert('No hay medicación prescrita para esta cirugía');
+    if (!cirugia || !cirugia.observaciones?.medicacionPrescrita) {
+      console.warn('No hay medicación prescrita para descargar');
       return;
     }
 
     try {
-      // Aquí implementarías la generación del PDF de receta
-      console.log('Generando receta para:', cirugia.nombrePaciente);
-      alert('Funcionalidad de descarga en desarrollo');
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      let yPosition = 30;
+
+      // Header del documento
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('RECETA MÉDICA', pageWidth / 2, yPosition, { align: 'center' });
+      
+      yPosition += 20;
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Clínica AraMedic', pageWidth / 2, yPosition, { align: 'center' });
+      
+      yPosition += 30;
+
+      // Información del paciente
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORMACIÓN DEL PACIENTE:', margin, yPosition);
+      
+      yPosition += 10;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Paciente: ${cirugia.nombrePaciente} ${cirugia.apellidoPaciente}`, margin, yPosition);
+      
+      yPosition += 8;
+      doc.text(`Documento: ${cirugia.documentoPaciente}`, margin, yPosition);
+      
+      yPosition += 8;
+      doc.text(`Cirugía: ${cirugia.nombreCirugia}`, margin, yPosition);
+      
+      yPosition += 8;
+      doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, margin, yPosition);
+
+      yPosition += 20;
+
+      // Medicación prescrita
+      doc.setFont('helvetica', 'bold');
+      doc.text('MEDICACIÓN PRESCRITA:', margin, yPosition);
+      
+      yPosition += 15;
+
+      for (const med of cirugia.observaciones.medicacionPrescrita) {
+        // Verificar si necesitamos una nueva página
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = 30;
+        }
+
+        doc.setFont('helvetica', 'bold');
+        doc.text(`• ${med.medicamento}`, margin + 5, yPosition);
+        
+        yPosition += 8;
+        doc.setFont('helvetica', 'normal');
+        doc.text(`  Dosis: ${med.dosis}`, margin + 10, yPosition);
+        
+        yPosition += 6;
+        doc.text(`  Frecuencia: ${med.frecuencia}`, margin + 10, yPosition);
+        
+        yPosition += 6;
+        doc.text(`  Duración: ${med.duracionDias} días`, margin + 10, yPosition);
+        
+        yPosition += 6;
+        doc.text(`  Vía de administración: ${med.viaAdministracion}`, margin + 10, yPosition);
+        
+        if (med.indicaciones) {
+          yPosition += 6;
+          doc.text(`  Indicaciones: ${med.indicaciones}`, margin + 10, yPosition);
+        }
+        
+        yPosition += 12;
+      }
+
+      // Observaciones finales
+      if (cirugia.observaciones.observacionesFinales) {
+        yPosition += 10;
+        if (yPosition > 230) {
+          doc.addPage();
+          yPosition = 30;
+        }
+        
+        doc.setFont('helvetica', 'bold');
+        doc.text('OBSERVACIONES GENERALES:', margin, yPosition);
+        
+        yPosition += 10;
+        doc.setFont('helvetica', 'normal');
+        
+        // Dividir el texto en líneas si es muy largo
+        const observaciones = doc.splitTextToSize(cirugia.observaciones.observacionesFinales, pageWidth - 2 * margin);
+        doc.text(observaciones, margin, yPosition);
+        yPosition += observaciones.length * 6;
+      }
+
+      // Recomendaciones
+      if (cirugia.observaciones.recomendaciones) {
+        yPosition += 10;
+        if (yPosition > 230) {
+          doc.addPage();
+          yPosition = 30;
+        }
+        
+        doc.setFont('helvetica', 'bold');
+        doc.text('RECOMENDACIONES:', margin, yPosition);
+        
+        yPosition += 10;
+        doc.setFont('helvetica', 'normal');
+        
+        const recomendaciones = doc.splitTextToSize(cirugia.observaciones.recomendaciones, pageWidth - 2 * margin);
+        doc.text(recomendaciones, margin, yPosition);
+        yPosition += recomendaciones.length * 6;
+      }
+
+      // Pie de página con información médica
+      const pageHeight = doc.internal.pageSize.getHeight();
+      yPosition = pageHeight - 40;
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('MÉDICO TRATANTE:', margin, yPosition);
+      
+      yPosition += 8;
+      doc.setFont('helvetica', 'normal');
+      
+      // Buscar el médico principal
+      const medicoPrincipal = cirugia.personalAsignado?.find(p => p.rol === 'principal');
+      if (medicoPrincipal) {
+        doc.text(`Dr. ${medicoPrincipal.nombre} ${medicoPrincipal.apellido}`, margin, yPosition);
+      }
+      
+      yPosition += 15;
+      doc.text('_________________________', margin, yPosition);
+      yPosition += 6;
+      doc.text('Firma y Sello', margin, yPosition);
+
+      // Generar nombre del archivo
+      const fileName = `Receta_${cirugia.nombrePaciente}_${cirugia.apellidoPaciente}_${new Date().toISOString().split('T')[0]}.pdf`;
+      
+      // Descargar el PDF
+      doc.save(fileName);
+      
+      console.log('Receta descargada exitosamente');
+      
     } catch (error) {
-      console.error('Error al generar receta:', error);
+      console.error('Error al generar la receta:', error);
+      alert('Error al generar la receta. Por favor, inténtelo de nuevo.');
     }
   }
 

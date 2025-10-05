@@ -34,6 +34,8 @@ import {
   CHECKLIST_ANESTESIA_GENERAL,
   QUIROFANOS_DISPONIBLES
 } from '../models/programacion-cirugia.interface';
+import { PacienteService } from './paciente.service';
+import { HistorialMedico } from '../models/paciente.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +43,10 @@ import {
 export class ProgramacionCirugiaService {
   private cirugiasProgramadasCollection = 'cirugias_programadas';
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private pacienteService: PacienteService
+  ) {}
 
   // Método utilitario para limpiar objetos de valores undefined
   private cleanUndefinedValues(obj: any): any {
@@ -373,6 +378,12 @@ export class ProgramacionCirugiaService {
     observaciones: ObservacionesCirugia, 
     usuario: string
   ): Promise<void> {
+    const cirugia = await this.obtenerCirugiaProgramada(id);
+    if (!cirugia) {
+      throw new Error('Cirugía no encontrada');
+    }
+
+    // Actualizar la cirugía con observaciones
     await this.actualizarCirugiaProgramada(id, {
       observaciones,
       estado: EstadoCirugiaProgramada.FINALIZADA,
@@ -385,6 +396,66 @@ export class ProgramacionCirugiaService {
       usuario,
       'Observaciones médicas completadas'
     );
+
+    // Agregar al historial clínico del paciente
+    await this.agregarCirugiaAlHistorial(cirugia, observaciones);
+  }
+
+  private async agregarCirugiaAlHistorial(
+    cirugia: CirugiaProgramada, 
+    observaciones: ObservacionesCirugia
+  ): Promise<void> {
+    try {
+      // Obtener el médico principal
+      const medicoPrincipal = cirugia.personalAsignado?.find(p => p.rol === 'principal');
+      const nombreMedico = medicoPrincipal 
+        ? `Dr. ${medicoPrincipal.nombre} ${medicoPrincipal.apellido}`
+        : 'No especificado';
+
+      // Calcular duración real de la cirugía
+      const duracionReal = cirugia.tiempos?.duracionRealMinutos || 0;
+
+      // Preparar medicamentos prescritos como string array
+      const medicamentosPrescritos = observaciones.medicacionPrescrita?.map(med => 
+        `${med.medicamento} - ${med.dosis} - ${med.frecuencia} por ${med.duracionDias} días`
+      ) || [];
+
+      // Crear registro de historial médico
+      const historialEntry: Omit<HistorialMedico, 'id'> = {
+        pacienteId: cirugia.idPaciente,
+        fecha: cirugia.tiempos?.finReal || new Date(),
+        tipo: 'cirugia',
+        titulo: `Cirugía: ${cirugia.nombreCirugia}`,
+        descripcion: `Procedimiento quirúrgico de ${cirugia.nombreCirugia} realizado satisfactoriamente.
+                     Duración total: ${duracionReal} minutos.
+                     Estado: Completada exitosamente.
+                     ${observaciones.observacionesFinales ? '\nObservaciones médicas: ' + observaciones.observacionesFinales : ''}
+                     ${observaciones.citasPostoperatorias ? '\nCitas postoperatorias programadas: ' + observaciones.citasPostoperatorias : ''}`.trim(),
+        medico: nombreMedico,
+        medicamentos: medicamentosPrescritos.length > 0 ? medicamentosPrescritos : undefined,
+        observaciones: observaciones.recomendaciones || undefined,
+        
+        // Específico para cirugías
+        tipoCirugia: cirugia.nombreCirugia,
+        duracionEstimada: undefined, // No tenemos duración estimada en la interfaz actual
+        duracionReal: duracionReal,
+        complicaciones: observaciones.complicaciones !== 'ninguna' 
+          ? `${observaciones.complicaciones}${observaciones.detalleComplicaciones ? ': ' + observaciones.detalleComplicaciones : ''}`
+          : undefined,
+        
+        fechaCreacion: new Date()
+      };
+
+      // Agregar al historial clínico
+      await this.pacienteService.agregarHistorial(historialEntry);
+      
+      console.log(`Cirugía agregada al historial clínico del paciente ${cirugia.nombrePaciente} ${cirugia.apellidoPaciente}`);
+      
+    } catch (error) {
+      console.error('Error al agregar cirugía al historial clínico:', error);
+      // No lanzamos el error para no interrumpir el flujo principal
+      // La cirugía ya se completó exitosamente
+    }
   }
 
   async cancelarCirugia(id: string, usuario: string, motivo: string): Promise<void> {

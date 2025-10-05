@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// Craft rules based on data in your Firestore database
+// allow write: if firestore.get(
+//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Permitir a los usuarios autenticados subir archivos a su carpeta personal
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Permitir lectura pública de imágenes de perfil para mostrarlas en la interfaz
+    match /users/{userId}/profile/{fileName} {
+      allow read: if request.auth != null;
+    }
+    
+    // Permitir lectura de firmas solo a usuarios autenticados (para médicos)
+    match /users/{userId}/signature/{fileName} {
+      allow read: if request.auth != null;
+    }
+  }
+}

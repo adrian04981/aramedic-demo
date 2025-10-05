@@ -245,6 +245,7 @@ interface MenuItem {
     .nav-item {
       cursor: pointer;
       transition: all 0.3s ease;
+      position: relative;
     }
 
     .nav-item:hover {

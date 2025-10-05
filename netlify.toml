@@ -3,7 +3,7 @@
   publish = "dist/aramedic-demo/browser"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "22"
   NPM_VERSION = "10"
 
 [[headers]]

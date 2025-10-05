@@ -13,11 +13,11 @@ import { CommonModule } from '@angular/common';
         <div class="container">
           <div class="logo">
             <h1>Clínica AraMedic</h1>
-            <span class="tagline">Tu salud, nuestra prioridad</span>
+            <span class="tagline">Tu belleza, nuestra pasión</span>
           </div>
           <nav class="nav">
             <a href="#nosotros" class="nav-link">Nosotros</a>
-            <a href="#servicios" class="nav-link">Servicios</a>
+            <a href="#servicios" class="nav-link">Tratamientos</a>
             <a href="#especialistas" class="nav-link">Especialistas</a>
             <a href="#contacto" class="nav-link">Contacto</a>
             <button class="btn btn-outline" (click)="goToLogin()">Portal Médico</button>
@@ -30,38 +30,41 @@ import { CommonModule } from '@angular/common';
         <div class="container">
           <div class="hero-content">
             <div class="hero-text">
-              <h2>Atención Médica de Excelencia</h2>
-              <p>En Clínica AraMedic brindamos servicios médicos integrales con más de 15 años de experiencia. 
-                 Contamos con especialistas altamente capacitados y tecnología de vanguardia para cuidar tu salud.</p>
+              <h2>Transforma tu Belleza con Nosotros</h2>
+              <p>En Clínica AraMedic ofrecemos los mejores tratamientos estéticos con más de 15 años de experiencia. 
+                 Contamos con cirujanos plásticos certificados y tecnología de última generación para realzar tu belleza natural.</p>
               <div class="hero-stats">
                 <div class="stat">
                   <span class="stat-number">15+</span>
                   <span class="stat-label">Años de experiencia</span>
                 </div>
                 <div class="stat">
-                  <span class="stat-number">25</span>
-                  <span class="stat-label">Especialistas</span>
+                  <span class="stat-number">12</span>
+                  <span class="stat-label">Especialistas certificados</span>
                 </div>
                 <div class="stat">
-                  <span class="stat-number">10000+</span>
-                  <span class="stat-label">Pacientes atendidos</span>
+                  <span class="stat-number">5000+</span>
+                  <span class="stat-label">Procedimientos exitosos</span>
                 </div>
               </div>
               <div class="hero-buttons">
-                <button class="btn btn-primary" (click)="scrollToSection('contacto')">
-                  Agendar Cita
+                <button class="btn btn-primary" (click)="contactWhatsApp()">
+                  <span class="whatsapp-icon">📱</span>
+                  Cotizar por WhatsApp
                 </button>
                 <button class="btn btn-secondary" (click)="scrollToSection('servicios')">
-                  Nuestros Servicios
+                  Ver Tratamientos
                 </button>
               </div>
             </div>
             <div class="hero-image">
-              <div class="medical-icon">
+              <div class="beauty-icon">
                 <svg width="300" height="300" viewBox="0 0 300 300" fill="none">
-                  <circle cx="150" cy="150" r="120" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2"/>
-                  <path d="M150 80v140M80 150h140" stroke="#3b82f6" stroke-width="8" stroke-linecap="round"/>
-                  <circle cx="150" cy="150" r="30" fill="#3b82f6"/>
+                  <circle cx="150" cy="150" r="120" fill="#fff5f7" stroke="#ec4899" stroke-width="2"/>
+                  <path d="M150 100c-27.6 0-50 22.4-50 50s22.4 50 50 50 50-22.4 50-50-22.4-50-50-50z" fill="#fce7f3"/>
+                  <circle cx="150" cy="150" r="40" fill="#ec4899" opacity="0.3"/>
+                  <path d="M120 130c0-5 4-9 9-9s9 4 9 9M162 130c0-5 4-9 9-9s9 4 9 9" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M135 170c8 8 22 8 30 0" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
                 </svg>
               </div>
             </div>
@@ -75,31 +78,32 @@ import { CommonModule } from '@angular/common';
           <div class="nosotros-content">
             <div class="nosotros-text">
               <h3>Nosotros</h3>
-              <h4>Comprometidos con tu bienestar desde 2009</h4>
-              <p>Clínica AraMedic nace con la misión de brindar atención médica integral y humanizada. 
-                 Somos un equipo multidisciplinario de profesionales de la salud comprometidos con la excelencia 
-                 en el servicio y la innovación constante.</p>
+              <h4>Especialistas en Cirugía Estética desde 2009</h4>
+              <p>Clínica AraMedic es líder en cirugía plástica y tratamientos estéticos en Perú. 
+                 Contamos con un equipo de cirujanos plásticos certificados y especializados en procedimientos como 
+                 liposucción, abdominoplastia, aumento de mama, rinoplastia y más. Nuestro compromiso es realzar 
+                 tu belleza natural con resultados excepcionales y seguros.</p>
               
               <div class="nosotros-features">
                 <div class="feature">
                   <span class="icon">🏆</span>
                   <div>
-                    <h5>Excelencia Médica</h5>
-                    <p>Especialistas certificados con formación continua</p>
+                    <h5>Cirujanos Certificados</h5>
+                    <p>Especialistas con certificación internacional</p>
                   </div>
                 </div>
                 <div class="feature">
-                  <span class="icon">�</span>
+                  <span class="icon">💎</span>
                   <div>
-                    <h5>Tecnología Avanzada</h5>
-                    <p>Equipos médicos de última generación</p>
+                    <h5>Tecnología de Vanguardia</h5>
+                    <p>Equipos y técnicas de última generación</p>
                   </div>
                 </div>
                 <div class="feature">
                   <span class="icon">❤️</span>
                   <div>
-                    <h5>Atención Humanizada</h5>
-                    <p>Cuidado integral centrado en el paciente</p>
+                    <h5>Atención Personalizada</h5>
+                    <p>Cuidado integral en cada paso del proceso</p>
                   </div>
                 </div>
               </div>
@@ -113,16 +117,16 @@ import { CommonModule } from '@angular/common';
                     <span class="label">Años de experiencia</span>
                   </div>
                   <div class="stat-item">
-                    <span class="number">25</span>
-                    <span class="label">Especialistas</span>
+                    <span class="number">12</span>
+                    <span class="label">Cirujanos Plásticos</span>
                   </div>
                   <div class="stat-item">
-                    <span class="number">10K+</span>
-                    <span class="label">Pacientes satisfechos</span>
+                    <span class="number">5K+</span>
+                    <span class="label">Cirugías exitosas</span>
                   </div>
                   <div class="stat-item">
-                    <span class="number">24/7</span>
-                    <span class="label">Atención de urgencias</span>
+                    <span class="number">98%</span>
+                    <span class="label">Satisfacción</span>
                   </div>
                 </div>
               </div>
@@ -135,74 +139,74 @@ import { CommonModule } from '@angular/common';
       <section class="servicios" id="servicios">
         <div class="container">
           <div class="section-header">
-            <h3>Nuestros Servicios</h3>
-            <p>Ofrecemos una amplia gama de servicios médicos para cuidar tu salud integral</p>
+            <h3>Nuestros Tratamientos</h3>
+            <p>Procedimientos estéticos de vanguardia para realzar tu belleza natural</p>
           </div>
           <div class="servicios-grid">
             <div class="servicio-card">
-              <div class="servicio-icon">🫀</div>
-              <h4>Cardiología</h4>
-              <p>Diagnóstico y tratamiento de enfermedades cardiovasculares con tecnología de vanguardia.</p>
+              <div class="servicio-icon">💃</div>
+              <h4>Liposucción</h4>
+              <p>Elimina grasa localizada y esculpe tu silueta con técnicas de liposucción de última generación.</p>
               <ul>
-                <li>Electrocardiogramas</li>
-                <li>Ecocardiogramas</li>
-                <li>Holter</li>
-                <li>Consulta preventiva</li>
+                <li>Liposucción HD</li>
+                <li>Lipoescultura 360°</li>
+                <li>Liposucción láser</li>
+                <li>Resultados naturales</li>
               </ul>
             </div>
             <div class="servicio-card">
-              <div class="servicio-icon">🧠</div>
-              <h4>Neurología</h4>
-              <p>Atención especializada en trastornos del sistema nervioso central y periférico.</p>
+              <div class="servicio-icon">✨</div>
+              <h4>Abdominoplastia</h4>
+              <p>Recupera un abdomen firme y tonificado eliminando exceso de piel y grasa abdominal.</p>
               <ul>
-                <li>Electroencefalogramas</li>
-                <li>Tratamiento de migrañas</li>
-                <li>Epilepsia</li>
-                <li>Trastornos del sueño</li>
+                <li>Abdominoplastia completa</li>
+                <li>Mini abdominoplastia</li>
+                <li>Reparación de diástasis</li>
+                <li>Recuperación rápida</li>
               </ul>
             </div>
             <div class="servicio-card">
-              <div class="servicio-icon">🦴</div>
-              <h4>Traumatología</h4>
-              <p>Especialistas en lesiones musculoesqueléticas y cirugía ortopédica.</p>
+              <div class="servicio-icon">💎</div>
+              <h4>Aumento de Mamas</h4>
+              <p>Aumenta y mejora la forma de tus senos con implantes de última generación.</p>
               <ul>
-                <li>Fracturas y lesiones</li>
-                <li>Artroscopia</li>
-                <li>Rehabilitación</li>
-                <li>Medicina deportiva</li>
+                <li>Implantes anatómicos</li>
+                <li>Implantes redondos</li>
+                <li>Prótesis de cohesivo</li>
+                <li>Técnicas mínimamente invasivas</li>
               </ul>
             </div>
             <div class="servicio-card">
-              <div class="servicio-icon">�‍⚕️</div>
-              <h4>Medicina Interna</h4>
-              <p>Atención integral del adulto con enfoque preventivo y terapéutico.</p>
+              <div class="servicio-icon">👃</div>
+              <h4>Rinoplastia</h4>
+              <p>Perfecciona la armonía facial con cirugía de nariz personalizada a tus rasgos.</p>
               <ul>
-                <li>Chequeos preventivos</li>
-                <li>Diabetes</li>
-                <li>Hipertensión</li>
-                <li>Control de crónicos</li>
+                <li>Rinoplastia estética</li>
+                <li>Rinoplastia funcional</li>
+                <li>Rinoseptoplastia</li>
+                <li>Técnica abierta y cerrada</li>
               </ul>
             </div>
             <div class="servicio-card">
-              <div class="servicio-icon">👩‍⚕️</div>
-              <h4>Ginecología</h4>
-              <p>Cuidado integral de la salud femenina en todas las etapas de la vida.</p>
+              <div class="servicio-icon">🍑</div>
+              <h4>Levantamiento Glúteo</h4>
+              <p>Realza y moldea tus glúteos con lipotransferencia o implantes de última generación.</p>
               <ul>
-                <li>Control ginecológico</li>
-                <li>Planificación familiar</li>
-                <li>Embarazo y parto</li>
-                <li>Menopausia</li>
+                <li>Brazilian Butt Lift (BBL)</li>
+                <li>Implantes glúteos</li>
+                <li>Levantamiento con hilos</li>
+                <li>Resultados duraderos</li>
               </ul>
             </div>
             <div class="servicio-card">
-              <div class="servicio-icon">👶</div>
-              <h4>Pediatría</h4>
-              <p>Atención especializada para bebés, niños y adolescentes hasta los 18 años.</p>
+              <div class="servicio-icon">🌟</div>
+              <h4>Rejuvenecimiento Facial</h4>
+              <p>Recupera una apariencia juvenil con procedimientos de rejuvenecimiento facial avanzados.</p>
               <ul>
-                <li>Control del niño sano</li>
-                <li>Vacunación</li>
-                <li>Desarrollo infantil</li>
-                <li>Urgencias pediátricas</li>
+                <li>Lifting facial</li>
+                <li>Blefaroplastia (párpados)</li>
+                <li>Rellenos faciales</li>
+                <li>Toxina botulínica</li>
               </ul>
             </div>
           </div>
@@ -214,20 +218,20 @@ import { CommonModule } from '@angular/common';
         <div class="container">
           <div class="section-header">
             <h3>Nuestros Especialistas</h3>
-            <p>Profesionales altamente calificados comprometidos con tu salud</p>
+            <p>Cirujanos plásticos certificados con amplia experiencia internacional</p>
           </div>
           <div class="especialistas-grid">
             <div class="doctor-card">
               <div class="doctor-image">
-                <div class="avatar">�‍⚕️</div>
+                <div class="avatar">👨‍⚕️</div>
               </div>
               <div class="doctor-info">
-                <h4>Dr. Carlos Rodríguez</h4>
-                <span class="specialty">Cardiólogo</span>
-                <p>Especialista en cardiología con 20 años de experiencia. Miembro de la Sociedad Colombiana de Cardiología.</p>
+                <h4>Dr. Ricardo Mendoza</h4>
+                <span class="specialty">Cirujano Plástico</span>
+                <p>Especialista en cirugía estética corporal con 18 años de experiencia. Certificado por la Sociedad Peruana de Cirugía Plástica.</p>
                 <div class="credentials">
-                  <span>📍 Consultorio 201</span>
-                  <span>📅 Lun-Vie 8:00-16:00</span>
+                  <span>📍 Lima, Perú</span>
+                  <span>📅 Lun-Vie 9:00-18:00</span>
                 </div>
               </div>
             </div>
@@ -236,12 +240,12 @@ import { CommonModule } from '@angular/common';
                 <div class="avatar">👩‍⚕️</div>
               </div>
               <div class="doctor-info">
-                <h4>Dra. María González</h4>
-                <span class="specialty">Ginecóloga</span>
-                <p>Especialista en ginecología y obstetricia. Experta en medicina materno-fetal y cirugía ginecológica.</p>
+                <h4>Dra. Patricia Silva</h4>
+                <span class="specialty">Cirujana Plástica</span>
+                <p>Experta en rejuvenecimiento facial y aumento mamario. Formación en Estados Unidos y Brasil.</p>
                 <div class="credentials">
-                  <span>📍 Consultorio 305</span>
-                  <span>📅 Mar-Sáb 9:00-17:00</span>
+                  <span>📍 Lima, Perú</span>
+                  <span>📅 Mar-Sáb 10:00-19:00</span>
                 </div>
               </div>
             </div>
@@ -250,12 +254,12 @@ import { CommonModule } from '@angular/common';
                 <div class="avatar">👨‍⚕️</div>
               </div>
               <div class="doctor-info">
-                <h4>Dr. Luis Martínez</h4>
-                <span class="specialty">Neurólogo</span>
-                <p>Neurólogo con subespecialidad en epilepsia. Formación en centros de excelencia internacional.</p>
+                <h4>Dr. Javier Torres</h4>
+                <span class="specialty">Cirujano Plástico</span>
+                <p>Especialista en liposucción HD y contorno corporal. Miembro de la International Society of Aesthetic Plastic Surgery (ISAPS).</p>
                 <div class="credentials">
-                  <span>📍 Consultorio 102</span>
-                  <span>📅 Lun-Jue 10:00-18:00</span>
+                  <span>📍 Lima, Perú</span>
+                  <span>📅 Lun-Jue 8:00-17:00</span>
                 </div>
               </div>
             </div>
@@ -269,50 +273,53 @@ import { CommonModule } from '@angular/common';
           <div class="contacto-content">
             <div class="contacto-info">
               <h3>Contacto</h3>
-              <p>Estamos aquí para cuidar tu salud. Contáctanos para agendar tu cita o resolver cualquier duda.</p>
+              <p>Estamos aquí para ayudarte a alcanzar la belleza que deseas. Contáctanos para tu consulta personalizada.</p>
               
               <div class="contact-details">
                 <div class="contact-item">
                   <span class="icon">📍</span>
                   <div>
                     <h5>Dirección</h5>
-                    <p>Calle 123 #45-67<br>Bogotá, Colombia</p>
+                    <p>Av. Javier Prado Este 1234<br>San Isidro, Lima - Perú</p>
                   </div>
                 </div>
                 <div class="contact-item">
-                  <span class="icon">📞</span>
+                  <span class="icon">�</span>
                   <div>
-                    <h5>Teléfonos</h5>
-                    <p>+57 (1) 234-5678<br>Urgencias: +57 300 123-4567</p>
+                    <h5>WhatsApp</h5>
+                    <p>+51 966 401 791<br>Respuesta inmediata</p>
                   </div>
                 </div>
                 <div class="contact-item">
                   <span class="icon">⏰</span>
                   <div>
                     <h5>Horarios</h5>
-                    <p>Lunes a Viernes: 7:00 AM - 8:00 PM<br>
-                       Sábados: 8:00 AM - 4:00 PM<br>
-                       Urgencias: 24/7</p>
+                    <p>Lunes a Viernes: 9:00 AM - 7:00 PM<br>
+                       Sábados: 9:00 AM - 2:00 PM</p>
                   </div>
                 </div>
                 <div class="contact-item">
                   <span class="icon">✉️</span>
                   <div>
                     <h5>Email</h5>
-                    <p>info@clinica-aramedic.com<br>citas@clinica-aramedic.com</p>
+                    <p>contacto@clinica-aramedic.pe<br>info@clinica-aramedic.pe</p>
                   </div>
                 </div>
               </div>
 
-              <div class="emergency-notice">
-                <h4>🚨 En caso de emergencia</h4>
-                <p>Llama inmediatamente al <strong>+57 300 123-4567</strong> o dirígete a nuestro servicio de urgencias disponible las 24 horas.</p>
+              <div class="whatsapp-cta">
+                <h4>� Cotiza tu procedimiento</h4>
+                <p>Chatea con nosotros por WhatsApp y recibe una cotización personalizada en minutos</p>
+                <button class="btn btn-whatsapp" (click)="contactWhatsApp()">
+                  <span class="whatsapp-icon">📱</span>
+                  Iniciar Chat en WhatsApp
+                </button>
               </div>
             </div>
             
             <div class="cita-form">
               <div class="form-card">
-                <h4>Agenda tu cita</h4>
+                <h4>Agenda tu Consulta</h4>
                 <p>Completa el formulario y nos contactaremos contigo</p>
                 
                 <form class="appointment-form" (ngSubmit)="onAppointmentSubmit($event)">
@@ -320,27 +327,27 @@ import { CommonModule } from '@angular/common';
                     <input type="text" placeholder="Nombre completo" required>
                   </div>
                   <div class="form-group">
-                    <input type="tel" placeholder="Teléfono" required>
+                    <input type="tel" placeholder="Teléfono / WhatsApp" required>
                   </div>
                   <div class="form-group">
                     <input type="email" placeholder="Correo electrónico" required>
                   </div>
                   <div class="form-group">
                     <select required>
-                      <option value="">Selecciona especialidad</option>
-                      <option value="cardiologia">Cardiología</option>
-                      <option value="neurologia">Neurología</option>
-                      <option value="traumatologia">Traumatología</option>
-                      <option value="medicina-interna">Medicina Interna</option>
-                      <option value="ginecologia">Ginecología</option>
-                      <option value="pediatria">Pediatría</option>
+                      <option value="">Selecciona procedimiento</option>
+                      <option value="liposuccion">Liposucción</option>
+                      <option value="abdominoplastia">Abdominoplastia</option>
+                      <option value="aumento-mamas">Aumento de Mamas</option>
+                      <option value="rinoplastia">Rinoplastia</option>
+                      <option value="gluteos">Levantamiento Glúteo</option>
+                      <option value="facial">Rejuvenecimiento Facial</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <textarea placeholder="Motivo de la consulta (opcional)" rows="3"></textarea>
+                    <textarea placeholder="Cuéntanos sobre tus expectativas (opcional)" rows="3"></textarea>
                   </div>
                   <button type="submit" class="btn btn-primary btn-full">
-                    Solicitar Cita
+                    Solicitar Consulta
                   </button>
                 </form>
               </div>
@@ -355,8 +362,8 @@ import { CommonModule } from '@angular/common';
           <div class="footer-content">
             <div class="footer-section">
               <div class="footer-logo">
-                <h4>Clínica AraMedic</h4>
-                <p>Tu salud, nuestra prioridad desde 2009</p>
+                <h4>✨ Clínica AraMedic</h4>
+                <p>Tu belleza, nuestra pasión desde 2009</p>
               </div>
               <div class="social-links">
                 <span>Síguenos en:</span>
@@ -369,14 +376,14 @@ import { CommonModule } from '@angular/common';
             </div>
             
             <div class="footer-section">
-              <h5>Servicios</h5>
+              <h5>Tratamientos</h5>
               <ul>
-                <li><a href="#servicios">Cardiología</a></li>
-                <li><a href="#servicios">Neurología</a></li>
-                <li><a href="#servicios">Traumatología</a></li>
-                <li><a href="#servicios">Medicina Interna</a></li>
-                <li><a href="#servicios">Ginecología</a></li>
-                <li><a href="#servicios">Pediatría</a></li>
+                <li><a href="#servicios">Liposucción</a></li>
+                <li><a href="#servicios">Abdominoplastia</a></li>
+                <li><a href="#servicios">Aumento de Mamas</a></li>
+                <li><a href="#servicios">Rinoplastia</a></li>
+                <li><a href="#servicios">Levantamiento Glúteo</a></li>
+                <li><a href="#servicios">Rejuvenecimiento Facial</a></li>
               </ul>
             </div>
             
@@ -393,20 +400,20 @@ import { CommonModule } from '@angular/common';
             <div class="footer-section">
               <h5>Contacto</h5>
               <ul>
-                <li>📍 Calle 123 #45-67, Bogotá</li>
-                <li>📞 +57 (1) 234-5678</li>
-                <li>✉️ info@clinica-aramedic.com</li>
-                <li>🚨 Urgencias: +57 300 123-4567</li>
+                <li>📍 San Isidro, Lima - Perú</li>
+                <li>� +51 966 401 791 (WhatsApp)</li>
+                <li>✉️ contacto@clinica-aramedic.pe</li>
+                <li>⏰ Lun-Vie: 9:00 AM - 7:00 PM</li>
               </ul>
             </div>
           </div>
           
           <div class="footer-bottom">
-            <p>&copy; 2024 Clínica AraMedic. Todos los derechos reservados.</p>
+            <p>&copy; 2024 Clínica AraMedic Perú. Todos los derechos reservados.</p>
             <div class="footer-links">
               <a href="#">Política de Privacidad</a>
               <a href="#">Términos y Condiciones</a>
-              <a href="#">PQRS</a>
+              <a href="#">Libro de Reclamaciones</a>
             </div>
           </div>
         </div>
@@ -442,14 +449,14 @@ import { CommonModule } from '@angular/common';
     }
 
     .logo h1 {
-      color: #2563eb;
+      color: #ec4899;
       margin: 0;
       font-size: 1.8rem;
       font-weight: 700;
     }
 
     .tagline {
-      color: #6b7280;
+      color: #ec4899;
       font-size: 0.9rem;
       font-style: italic;
     }
@@ -468,12 +475,12 @@ import { CommonModule } from '@angular/common';
     }
 
     .nav-link:hover {
-      color: #2563eb;
+      color: #ec4899;
     }
 
     /* Hero Section */
     .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 50%, #fbbf24 100%);
       color: white;
       padding: 6rem 0;
     }
@@ -490,6 +497,11 @@ import { CommonModule } from '@angular/common';
       margin-bottom: 1.5rem;
       font-weight: 700;
       line-height: 1.2;
+    }
+    
+    .whatsapp-icon {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
     }
 
     .hero p {
@@ -734,7 +746,7 @@ import { CommonModule } from '@angular/common';
     }
 
     .doctor-image {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
       padding: 2rem;
       text-align: center;
     }
@@ -763,7 +775,7 @@ import { CommonModule } from '@angular/common';
     }
 
     .specialty {
-      color: #2563eb;
+      color: #ec4899;
       font-weight: 600;
       margin-bottom: 1rem;
       display: block;
@@ -841,23 +853,42 @@ import { CommonModule } from '@angular/common';
       line-height: 1.5;
     }
 
-    .emergency-notice {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 0.5rem;
-      padding: 1rem;
+    .whatsapp-cta {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
     }
 
-    .emergency-notice h4 {
-      color: #dc2626;
+    .whatsapp-cta h4 {
+      color: white;
       margin: 0 0 0.5rem 0;
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
-    .emergency-notice p {
-      color: #7f1d1d;
-      margin: 0;
-      font-size: 0.9rem;
+    .whatsapp-cta p {
+      color: white;
+      margin: 0 0 1rem 0;
+      opacity: 0.95;
+    }
+
+    .btn-whatsapp {
+      background: white;
+      color: #25D366;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
     }
 
     .form-card {
@@ -899,8 +930,8 @@ import { CommonModule } from '@angular/common';
     .form-group select:focus,
     .form-group textarea:focus {
       outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      border-color: #ec4899;
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
     }
 
     /* Buttons */
@@ -918,12 +949,12 @@ import { CommonModule } from '@angular/common';
     }
 
     .btn-primary {
-      background: #2563eb;
+      background: #ec4899;
       color: white;
     }
 
     .btn-primary:hover {
-      background: #1d4ed8;
+      background: #db2777;
       transform: translateY(-2px);
     }
 
@@ -935,17 +966,17 @@ import { CommonModule } from '@angular/common';
 
     .btn-secondary:hover {
       background: white;
-      color: #2563eb;
+      color: #ec4899;
     }
 
     .btn-outline {
       background: transparent;
-      color: #2563eb;
-      border: 2px solid #2563eb;
+      color: #ec4899;
+      border: 2px solid #ec4899;
     }
 
     .btn-outline:hover {
-      background: #2563eb;
+      background: #ec4899;
       color: white;
     }
 
@@ -1120,13 +1151,21 @@ export class LandingComponent {
     this.router.navigate(['/login']);
   }
 
+  contactWhatsApp() {
+    // Número de WhatsApp para Perú
+    const phoneNumber = '51966401791';
+    const message = encodeURIComponent('Hola, me gustaría recibir información sobre los procedimientos estéticos de Clínica AraMedic.');
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  }
+
   scrollToSection(sectionId: string) {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
   }
 
   onAppointmentSubmit(event: Event) {
     event.preventDefault();
-    // Aquí podrías agregar la lógica para enviar el formulario
-    alert('Gracias por su solicitud. Nos comunicaremos con usted pronto.');
+    // Redirigir a WhatsApp al enviar el formulario
+    alert('¡Gracias por tu interés! Te redirigiremos a WhatsApp para finalizar tu solicitud.');
+    this.contactWhatsApp();
   }
 }

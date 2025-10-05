@@ -523,7 +523,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToAppointments() {
-    console.log('Ir a citas');
+    this.router.navigate(['/citas']);
   }
 
   goToPatients() {

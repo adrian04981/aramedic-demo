@@ -2,7 +2,9 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataSetupService } from '../../services/data-setup.service';
+import { CitaSetupService } from '../../services/cita-setup.service';
 import { PacienteService } from '../../services/paciente.service';
+import { CitaService } from '../../services/cita.service';
 
 @Component({
   selector: 'app-setup',
@@ -13,7 +15,23 @@ import { PacienteService } from '../../services/paciente.service';
       <div class="setup-card">
         <div class="setup-header">
           <h1>🔧 Configuración de Datos de Prueba</h1>
-          <p>Sistema de configuración para AraMedic - Datos ficticios para testing</p>
+          <p>{{setupMode() === 'citas' ? 'Sistema de setup para Citas y Agendamiento' : 'Sistema de setup para Pacientes y Usuarios'}}</p>
+          
+          <!-- Navegación entre modos -->
+          <div class="setup-nav">
+            <button 
+              class="nav-btn" 
+              [class.active]="setupMode() === 'pacientes'"
+              (click)="cambiarModo('pacientes')">
+              👥 Setup Pacientes
+            </button>
+            <button 
+              class="nav-btn" 
+              [class.active]="setupMode() === 'citas'"
+              (click)="cambiarModo('citas')">
+              📅 Setup Citas
+            </button>
+          </div>
         </div>
 
         <div class="setup-content">
@@ -29,13 +47,19 @@ import { PacienteService } from '../../services/paciente.service';
                 <span class="stat-number">{{totalHistoriales()}}</span>
                 <span class="stat-label">Registros Médicos</span>
               </div>
+              <div class="stat-item">
+                <span class="stat-number">{{totalCitas()}}</span>
+                <span class="stat-label">Citas Programadas</span>
+              </div>
             </div>
           </div>
 
           <!-- Acciones de setup -->
           <div class="actions-section">
-            <h3>⚙️ Acciones Disponibles</h3>
+            <h3>⚙️ {{setupMode() === 'citas' ? 'Gestión de Citas de Prueba' : 'Gestión de Pacientes de Prueba'}}</h3>
             
+            <!-- Sección de Pacientes (solo visible en modo pacientes) -->
+            @if (setupMode() === 'pacientes') {
             <div class="action-card">
               <div class="action-info">
                 <h4>🧑‍⚕️ Crear Pacientes Ficticios</h4>
@@ -62,21 +86,62 @@ import { PacienteService } from '../../services/paciente.service';
                 </button>
               </div>
             </div>
+            }
 
-            <div class="action-card warning">
+            <!-- Sección de Citas (solo visible en modo citas) -->
+            @if (setupMode() === 'citas') {
+            <div class="action-card primary">
               <div class="action-info">
-                <h4>🗑️ Limpiar Datos de Prueba</h4>
-                <p>Elimina todos los datos de pacientes y historiales. <strong>Esta acción no se puede deshacer.</strong></p>
-                <div class="warning-note">
-                  ⚠️ <strong>Atención:</strong> Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.
+                <h4>📅 Crear Datos de Citas</h4>
+                <p>Genera citas médicas de prueba para diferentes fechas y estados para probar el sistema de agendamiento.</p>
+                <div class="data-preview">
+                  • 25-30 citas ficticias<br>
+                  • Diferentes estados y tipos<br>
+                  • Rangos de fechas variados<br>
+                  • Asociadas a pacientes existentes
                 </div>
               </div>
               <div class="action-buttons">
+                <button 
+                  class="btn btn-primary" 
+                  (click)="crearDatosCitas()"
+                  [disabled]="cargandoCitas()">
+                  {{cargandoCitas() ? 'Creando...' : '✨ Crear Citas'}}
+                </button>
+                <button 
+                  class="btn btn-secondary" 
+                  (click)="limpiarCitas()"
+                  [disabled]="cargandoCitas()">
+                  {{cargandoCitas() ? 'Limpiando...' : '🗑️ Limpiar Citas'}}
+                </button>
+              </div>
+            </div>
+            }
+
+            <!-- Sección de limpieza (visible en ambos modos) -->
+            <div class="action-card warning">
+              <div class="action-info">
+                <h4>🗑️ Limpiar Datos de Prueba</h4>
+                <p>{{setupMode() === 'citas' ? 'Elimina todas las citas de prueba.' : 'Elimina todos los datos de pacientes y historiales.'}} <strong>Esta acción no se puede deshacer.</strong></p>
+                <div class="warning-note">
+                  ⚠️ <strong>Atención:</strong> {{setupMode() === 'citas' ? 'Para citas puedes usar el botón de limpiar arriba.' : 'Por seguridad, la limpieza debe realizarse manualmente desde la consola de Firebase.'}}
+                </div>
+              </div>
+              <div class="action-buttons">
+                @if (setupMode() === 'citas') {
+                <button 
+                  class="btn btn-danger" 
+                  (click)="limpiarCitas()"
+                  [disabled]="cargandoCitas()">
+                  {{cargandoCitas() ? 'Limpiando...' : '🗑️ Limpiar Todas las Citas'}}
+                </button>
+                } @else {
                 <button 
                   class="btn btn-danger" 
                   disabled>
                   🔒 Limpiar (Manual)
                 </button>
+                }
               </div>
             </div>
           </div>
@@ -174,9 +239,41 @@ import { PacienteService } from '../../services/paciente.service';
     }
 
     .setup-header p {
-      margin: 0;
+      margin: 0 0 1rem 0;
       opacity: 0.9;
       font-size: 1.1rem;
+    }
+
+    .setup-nav {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: #667eea;
+      border-color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .setup-content {
@@ -490,26 +587,43 @@ import { PacienteService } from '../../services/paciente.service';
 export class SetupComponent {
   totalPacientes = signal(0);
   totalHistoriales = signal(0);
+  totalCitas = signal(0);
   cargandoPacientes = signal(false);
+  cargandoCitas = signal(false);
+  setupMode = signal<'pacientes' | 'citas'>('pacientes');
   logs = signal<Array<{timestamp: Date, message: string, type: 'info' | 'success' | 'error'}>>([]);
 
   constructor(
     private dataSetupService: DataSetupService,
     private pacienteService: PacienteService,
+    private citaSetupService: CitaSetupService,
+    private citaService: CitaService,
     private router: Router
   ) {}
 
   ngOnInit() {
+    // Detectar el modo basado en la ruta actual
+    const currentUrl = this.router.url;
+    if (currentUrl.includes('setup/citas')) {
+      this.setupMode.set('citas');
+      this.agregarLog('Sistema de setup de citas inicializado', 'info');
+    } else {
+      this.setupMode.set('pacientes');
+      this.agregarLog('Sistema de setup de pacientes inicializado', 'info');
+    }
+    
     this.cargarEstadisticas();
-    this.agregarLog('Sistema de setup inicializado', 'info');
   }
 
   async cargarEstadisticas() {
     try {
       // Obtener total de pacientes
-      this.pacienteService.obtenerPacientes().subscribe(pacientes => {
-        this.totalPacientes.set(pacientes.length);
-      });
+      const totalPacientes = await this.pacienteService.obtenerContadorPacientes();
+      this.totalPacientes.set(totalPacientes);
+
+      // Obtener total de citas
+      const totalCitas = await this.citaService.obtenerContadorCitas();
+      this.totalCitas.set(totalCitas);
 
       // Para historiales, necesitarías implementar un método similar
       // Por ahora usaremos 0 como placeholder
@@ -549,6 +663,44 @@ export class SetupComponent {
     } finally {
       this.cargandoPacientes.set(false);
     }
+  }
+
+  async crearDatosCitas() {
+    this.cargandoCitas.set(true);
+    this.agregarLog('Iniciando creación de citas ficticias...', 'info');
+
+    try {
+      await this.citaSetupService.crearCitasDePrueba();
+      this.agregarLog('✅ Citas ficticias creadas exitosamente', 'success');
+      this.cargarEstadisticas();
+    } catch (error) {
+      console.error('Error creando citas:', error);
+      this.agregarLog('❌ Error creando citas ficticias', 'error');
+    } finally {
+      this.cargandoCitas.set(false);
+    }
+  }
+
+  async limpiarCitas() {
+    this.cargandoCitas.set(true);
+    this.agregarLog('Iniciando limpieza de citas...', 'info');
+
+    try {
+      await this.citaSetupService.limpiarCitas();
+      this.agregarLog('✅ Citas eliminadas exitosamente', 'success');
+      this.cargarEstadisticas();
+    } catch (error) {
+      console.error('Error limpiando citas:', error);
+      this.agregarLog('❌ Error limpiando citas', 'error');
+    } finally {
+      this.cargandoCitas.set(false);
+    }
+  }
+
+  cambiarModo(modo: 'pacientes' | 'citas') {
+    this.setupMode.set(modo);
+    const ruta = modo === 'citas' ? '/setup/citas' : '/setup/pacientes';
+    this.router.navigate([ruta]);
   }
 
   agregarLog(message: string, type: 'info' | 'success' | 'error') {

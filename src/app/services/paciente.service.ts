@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { 
   Firestore, 
   collection, 
@@ -47,6 +47,17 @@ export class PacienteService {
       query(this.pacientesCollection, orderBy('apellidos', 'asc')),
       { idField: 'id' }
     ) as Observable<Paciente[]>;
+  }
+
+  async obtenerContadorPacientes(): Promise<number> {
+    try {
+      const q = query(this.pacientesCollection);
+      const snapshot = await getDocs(q);
+      return snapshot.size;
+    } catch (error) {
+      console.error('Error obteniendo contador de pacientes:', error);
+      return 0;
+    }
   }
 
   obtenerPacientePorId(id: string): Observable<Paciente | undefined> {

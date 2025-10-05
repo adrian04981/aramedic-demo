@@ -26,7 +26,16 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'citas',
+    loadComponent: () => import('./components/citas/citas.component').then(m => m.CitasComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'setup/pacientes',
+    loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
+  },
+  {
+    path: 'setup/citas',
     loadComponent: () => import('./components/setup/setup.component').then(m => m.SetupComponent)
   },
   {
